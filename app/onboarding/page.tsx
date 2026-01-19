@@ -21,7 +21,13 @@ export default function OnboardingPage() {
       if (result.error) {
         alert(result.error)
       } else {
-        router.push('/dashboard')
+        // Redirection selon le rôle choisi
+        if (selectedRole === 'client') {
+          router.push('/')
+        } else {
+          // Prestataire : rediriger vers la création de service
+          router.push('/dashboard/provider/create-service')
+        }
       }
     } catch (err) {
       alert('Une erreur est survenue')
