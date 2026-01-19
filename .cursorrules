@@ -1,0 +1,293 @@
+\# 🏛️ ULTIMATE MASTERFILE : PRESTABRIDGE PLATFORM (MVP)
+
+> \*\*RÔLE IA :\*\* Tu es le CTO, Lead Architect \& Product Manager Expert.
+
+> \*\*VISION :\*\* Une plateforme hybride "Marketplace \& Organisateur Automatisé".
+
+> \*\*CONCEPT CLÉ :\*\* "Sur-mesure" OU "Scène pré-remplie" (Packages) selon le budget et les contraintes.
+
+> \*\*CONTRAINTE SUPRÊME :\*\* Stack "Pro" (Next.js/Supabase) à 0€ (Free Tiers) jusqu'au lancement.
+
+
+
+---
+
+
+
+\## 1. LA STACK TECHNIQUE (GRATUIT PRO \& MOBILE FIRST)
+
+\* \*\*Frontend :\*\* Next.js 14+ (App Router).
+
+\* \*\*Architecture :\*\* Hybride (SSR pour le SEO Public / CSR pour le Dashboard Privé).
+
+\* \*\*Mobile :\*\* PWA (Progressive Web App). Le site doit être installable sur mobile (manifest.json + service workers).
+
+\* \*\*Design :\*\* Mobile-First strict (Tout doit fonctionner parfaitement sur un écran de smartphone avant le desktop).
+
+\* \*\*UI Library :\*\* Shadcn/UI + Tailwind CSS.
+
+\* \*\*Backend :\*\* Supabase.
+
+\* \*\*Paiement :\*\* Stripe Connect.
+
+\* \*\*Maps :\*\* Leaflet.
+
+---
+
+
+
+\## 2. USER FLOW : LE "CONFIGURATEUR INTELLIGENT"
+
+L'entrée ne se fait pas par une recherche classique, mais par un "Wizard" (Entonnoir de qualification) pour garantir le "Zéro Erreur".
+
+
+
+\### Étape A : Le Cadre (Hard Constraints)
+
+\* \*\*Budget Global :\*\* (ex: 5000€).
+
+\* \*\*Date \& Créneau :\*\* (ex: 12 Juin, Soirée).
+
+\* \*\*Type d'événement :\*\* (Mariage, Festival, Inauguration, anniversaire, Concert privé...).
+
+\* \*\*Objectif :\*\* Inauguration (Commercial) VS Découverte Art (Culturel) VS Mixte.
+
+
+
+\### Étape B : L'Inventaire (Logique d'Exclusion)
+
+\* \*Question :\* "Possédez-vous déjà certains éléments ?"
+
+&nbsp;   \* \[ ] J'ai le Lieu -> \*Action : Retirer "Salles" du package.\*
+
+&nbsp;   \* \[ ] J'ai le Traiteur -> \*Action : Retirer "Food" du package.\*
+
+&nbsp;   \* \[ ] J'ai la Technique -> \*Action : Retirer "Tech" du package.\*
+
+
+
+\### Étape C : Les Restrictions Critiques (Logique de Contrainte)
+
+1\.  \*\*Audience :\*\*
+
+&nbsp;   \* Grand Public -> \*Action : Imposer module "Sécurité/SSIAP".\*
+
+&nbsp;   \* Privé -> \*Optionnel.\*
+
+2\.  \*\*Alimentaire :\*\*
+
+&nbsp;   \* Spécifique (Halal, Casher, Vegan) -> \*Action : Filtrer strictement les traiteurs.\*
+
+3\.  \*\*Vibe \& Son :\*\*
+
+&nbsp;   \* Ambiance Fond / Lounge -> \*Action : Filtrer artistes "Concert".\*
+
+&nbsp;   \* Spectacle / Dansant -> \*Action : Vérifier besoins techniques.\*
+
+4\.  \*\*Logistique Lieu :\*\*
+
+&nbsp;   \* Étage sans ascenseur -> \*Action : Ajouter surcoût manutention.\*
+
+&nbsp;   \* Terrain Nu (Extérieur) -> \*Action : Ajouter automatiquement Groupe Électrogène + Sanitaires.\*
+
+&nbsp;   \* Zone Résidentielle -> \*Action : Exclure batteries acoustiques et gros Sound Systems (Limiteur dB).\*
+
+
+
+---
+
+
+
+\## 3. LES CATÉGORIES DE SERVICES (TAXONOMIE)
+
+\* \*\*Lieux :\*\* Salles, Plein air, Hangar.
+
+\* \*\*Sécurité :\*\* Agents SSIAP, Gardiennage, Maîtres-chiens.
+
+\* \*\*Artistes :\*\* Musiciens, Animateurs, Humoristes, DJs.
+
+\* \*\*Staff :\*\* Techniciens (Son/Lumière), Traiteurs/Serveurs, Hôtesses, agents de nettoyage.
+
+\* \*\*Esthétique :\*\* Décorateurs, Costumiers, Coiffure/Maquillage/Déguisement.
+
+\* \*\*Logistique :\*\* Location matériel, Transport, Tentes.
+
+\* \*\*Média \& Influence :\*\* Photographe, Vidéaste, Influenceurs (Promo événement), Publicité.
+
+
+
+---
+
+
+
+\## 4. RÈGLES MÉTIERS \& JURIDIQUES
+
+\* \*\*Clause Éthique (Modération) :\*\* Obligation contractuelle : "Engagement à ne pas produire de contenu à connotation politique extrême ou haineuse".
+
+\* \*\*Légalité \& SACEM :\*\* Champ obligatoire "Modalités de diffusion" (Soumis ou non aux droits d'auteur).
+
+\* \*\*Conformité Paiement :\*\* Tout passe par Stripe Connect. Interdiction absolue du cash ou virement direct (Lutte anti-blanchiment).
+
+\* \*\*Disintermédiation (Police) :\*\* Masquage automatique des 06/Emails dans le chat tant que le booking n'est pas "Paid".
+
+
+
+---
+
+
+
+\## 5. INTELLIGENCE ARTIFICIELLE \& UX AVANCÉE
+
+> \*\*Objectif :\*\* Transformer la plateforme en "Organisateur Virtuel".
+
+
+
+\### A. "Mood-to-Specs" (Vision)
+
+\* \*\*Input :\*\* Upload photo d'inspiration (Pinterest).
+
+\* \*\*Traitement :\*\* Analyse IA (GPT-4 Vision) pour extraire les tags techniques (ex: "Guirlande Guinguette", "Arche Bohème").
+
+\* \*\*Output :\*\* Filtrage automatique des prestataires possédant ce matériel.
+
+
+
+\### B. "Budget Tetris" (Algorithme d'Arbitrage)
+
+\* \*\*Problème :\*\* Budget insuffisant pour tout avoir en "Premium".
+
+\* \*\*Solution :\*\* L'IA propose 3 scénarios :
+
+&nbsp;   1.  \*Focus Ambiance :\* Gros budget Artiste / Petit budget Traiteur.
+
+&nbsp;   2.  \*Focus Gastronomie :\* Gros budget Traiteur / DJ Standard.
+
+&nbsp;   3.  \*Équilibré.\*
+
+
+
+\### C. "Smart Run-of-Show" (Conducteur)
+
+\* \*\*Output :\*\* Génération automatique d'un PDF "Déroulé de la journée" basé sur les contraintes métiers (ex: Traiteur arrive H-2, Balance Son H-1, Sécurité H-0.5).
+
+
+
+\### D. "Risk Watchdog" (Météo)
+
+\* \*\*Cron Job :\*\* Check météo à J-7 et J-3.
+
+\* \*\*Action :\*\* Si Pluie + Extérieur -> Suggestion automatique de location de Tentes/Chapiteaux.
+
+
+
+\### E. Marketing Automatisé
+
+\* \*\*Newsletter :\*\* Agrégation automatique des événements publics locaux de la semaine pour générer du trafic.
+
+\* \*\*Sourcing IA :\*\* Scripts externes pour démarcher les prestataires via Emailing ciblé (Hors App).
+
+
+
+---
+
+
+
+\## 6. STRUCTURE BASE DE DONNÉES (SUPABASE SCHEMA)
+
+
+
+\### Tables Core
+
+\* `profiles` : extension auth, role, type\_prestataire, verified (bool).
+
+\* `services` : provider\_id, category, tags\[], price, technical\_specs (jsonb : power\_needed, noise\_level).
+
+\* `bookings` : status (pending, paid, completed), escrow\_amount.
+
+\* `project\_specs` : (Le Configurateur) user\_id, has\_venue (bool), is\_public (bool), music\_vibe (enum), access\_restrictions (enum).
+
+
+
+\### Tables Compliance \& Reviews
+
+\* `legal\_documents` : Preuves KYC.
+
+\* `reviews` : Bilatérales (Client note Prestataire ET Prestataire note Client).
+
+\* `compliance\_logs` : Acceptation des clauses (Politique, SACEM).
+
+
+
+---
+
+
+
+\## 7. PROTOCOLE DE DÉVELOPPEMENT (CURSOR)
+
+1\.  \*\*Contexte :\*\* Ne jamais réinstaller ce qui l'est déjà.
+
+2\.  \*\*Sécurité :\*\* RLS (Row Level Security) OBLIGATOIRE sur chaque table dès sa création.
+
+3\.  \*\*Step-by-Step :\*\*
+
+&nbsp;   \* Phase 1 : Setup Infra (Next.js/Supabase/Stripe).
+
+&nbsp;   \* Phase 2 : Auth \& Profils.
+
+&nbsp;   \* Phase 3 : Le Configurateur (Formulaire).
+
+&nbsp;   \* Phase 4 : Matching \& Recherche.
+
+&nbsp;   \* Phase 5 : Paiement Séquestre.
+
+&nbsp;   \* Phase 6 : Features IA (Vision/Planning).
+
+4\.  \*\*Mobile First :\*\* Chaque composant UI doit être vérifié sur vue mobile. Le responsive n'est pas une option, c'est la base.
+
+
+
+---
+
+
+
+\## 8. DÉMARRAGE
+
+\* \[ ] Initialisation Next.js + Git.
+
+\* \[ ] Setup Supabase (Auth + Tables).
+
+\* \[ ] Configuration Stripe Connect.
+
+\* \[ ] Développement du "Configurateur Intelligent".
+
+
+---
+
+## 9. STRATÉGIE DE DÉPLOIEMENT (DEV vs PROD)
+> **Objectif :** Ne jamais casser le site en ligne (Production) quand on développe une nouveauté.
+
+### Workflow Git & Vercel
+1.  **Branches :**
+    * `main` : Code de Production (Stable, le site réel). Interdiction de toucher directement.
+    * `develop` : Code de Développement (Brouillon). C'est ici que tu codes et testes.
+2.  **Règle d'Or pour l'IA :**
+    * Tout nouveau code ou modification doit être fait sur la branche `develop` d'abord.
+    * Une fois validé par le Fondateur (moi), tu fusionneras `develop` vers `main` pour mettre à jour le site réel.
+3.  **URLs (Automatisé par Vercel) :**
+    * Le site `develop` aura une URL de test (ex: `prestabridge-git-develop.vercel.app`).
+    * Le site `main` aura l'URL officielle (ex: `prestabridge.fr`).
+
+
+
+# 10. QUALITÉ & WORKFLOW STANDARDS
+
+## 1. RESPONSIVE DESIGN OBLIGATOIRE
+- Chaque composant DOIT être "Mobile First" (classes de base pour mobile, `md:` et `lg:` pour desktop).
+- Ne jamais utiliser de largeurs fixes (ex: `w-[500px]`), utiliser des pourcentages ou `max-w`.
+- Vérifier systématiquement que les menus, tableaux et grilles s'empilent proprement sur mobile.
+- Les boutons doivent être assez grands pour le tactile sur mobile (min 44px).
+
+## 2. WORKFLOW PROD vs DEV
+- Nous travaillons sur la branche `develop`. La branche `main` est SACRÉE (Production uniquement).
+- Ne jamais mettre de clés API (Secrets) en dur dans le code. Toujours utiliser `process.env`.
+- Le code doit être robuste : gérer les états de chargement (Loading...) et les erreurs (Error states) pour ne pas faire planter l'app en prod.
