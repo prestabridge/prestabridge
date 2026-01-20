@@ -50,9 +50,10 @@ export async function updateUserRole(role: 'client' | 'provider', providerType?:
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser()
 
-  if (!user) {
+  if (authError || !user) {
     return { error: 'Non authentifié' }
   }
 
@@ -62,13 +63,32 @@ export async function updateUserRole(role: 'client' | 'provider', providerType?:
     updateData.provider_type = providerType
   }
 
-  const { error } = await supabase
+  // Mettre à jour le profil dans la table profiles
+  const { error: updateError } = await supabase
     .from('profiles')
     .update(updateData)
     .eq('id', user.id)
 
-  if (error) {
-    return { error: error.message }
+  if (updateError) {
+    console.error('Erreur lors de la mise à jour du rôle:', updateError)
+    return { error: updateError.message }
+  }
+
+  // Vérifier que la mise à jour a bien été effectuée en relisant le profil
+  const { data: updatedProfile, error: verifyError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (verifyError || !updatedProfile) {
+    console.error('Erreur lors de la vérification du rôle:', verifyError)
+    return { error: 'Erreur lors de la vérification de la mise à jour' }
+  }
+
+  if (updatedProfile.role !== role) {
+    console.error('Le rôle n\'a pas été correctement mis à jour. Attendu:', role, 'Trouvé:', updatedProfile.role)
+    return { error: 'Le rôle n\'a pas été correctement mis à jour' }
   }
 
   revalidatePath('/', 'layout')

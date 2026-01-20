@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { createService } from '@/app/actions/services'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { updateService } from '@/app/actions/services'
 import { uploadMultipleServiceImages } from '@/app/actions/storage'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,50 +17,42 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Sparkles, Briefcase, ArrowRight, Euro, Image as ImageIcon, X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { ServiceCategory } from '@/src/types/supabase'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 import imageCompression from 'browser-image-compression'
 
 // Mapping des catégories avec labels français
 const categoryLabels: Record<ServiceCategory, string> = {
-  // Lieux
   salle: 'Salle',
   plein_air: 'Plein Air',
   hangar: 'Hangar',
-  // Sécurité
   ssiap: 'Agent SSIAP',
   gardiennage: 'Gardiennage',
   maitre_chien: 'Maître-chien',
-  // Artistes
   musicien: 'Musicien',
   animateur: 'Animateur',
   humoriste: 'Humoriste',
   dj: 'DJ',
-  // Staff
   technicien_son: 'Technicien Son',
   technicien_lumiere: 'Technicien Lumière',
   traiteur: 'Traiteur',
   serveur: 'Serveur',
   hotesse: 'Hôtesse',
   nettoyage: 'Nettoyage',
-  // Esthétique
   decorateur: 'Décorateur',
   costumier: 'Costumier',
   coiffure: 'Coiffure',
   maquillage: 'Maquillage',
-  // Logistique
   location_materiel: 'Location Matériel',
   transport: 'Transport',
   tente: 'Tente',
-  // Média
   photographe: 'Photographe',
   videaste: 'Vidéaste',
   influenceur: 'Influenceur',
   publicite: 'Publicité',
 }
 
-// Groupes de catégories pour organisation
 const categoryGroups = {
   'Lieux': ['salle', 'plein_air', 'hangar'] as ServiceCategory[],
   'Sécurité': ['ssiap', 'gardiennage', 'maitre_chien'] as ServiceCategory[],
@@ -70,19 +63,21 @@ const categoryGroups = {
   'Média': ['photographe', 'videaste', 'influenceur', 'publicite'] as ServiceCategory[],
 }
 
-export default function CreateServicePage() {
+export default function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const galleryScrollRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [serviceId, setServiceId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [uploadingImages, setUploadingImages] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<{ file: File; preview: string; compressing?: boolean }[]>([])
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([])
-  
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const galleryScrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -92,6 +87,57 @@ export default function CreateServicePage() {
     price_fixed: '',
     city: '',
   })
+
+  // Charger les données du service
+  useEffect(() => {
+    const loadService = async () => {
+      const resolvedParams = await params
+      setServiceId(resolvedParams.id)
+
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push('/login')
+        return
+      }
+
+      const { data: service, error: serviceError } = await supabase
+        .from('services')
+        .select('*')
+        .eq('id', resolvedParams.id)
+        .eq('provider_id', user.id)
+        .single()
+
+      if (serviceError || !service) {
+        setError('Service introuvable ou vous n\'êtes pas autorisé à le modifier')
+        setLoading(false)
+        return
+      }
+
+      // Pré-remplir le formulaire
+      setFormData({
+        title: service.title || '',
+        description: service.description || '',
+        category: service.category || '',
+        price_per_hour: service.price_per_hour?.toString() || '',
+        price_per_day: service.price_per_day?.toString() || '',
+        price_fixed: service.price_fixed?.toString() || '',
+        city: service.city || '',
+      })
+
+      // Charger les images existantes
+      if (service.images && service.images.length > 0) {
+        setUploadedImageUrls(service.images)
+      }
+
+      setLoading(false)
+    }
+
+    loadService()
+  }, [params, router])
 
   // Gérer la sélection d'images multiples avec compression automatique
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +225,7 @@ export default function CreateServicePage() {
 
     setSelectedImages((prev) => [...prev, ...compressedFiles])
 
-    // Réinitialiser l'input
+    // Réinitialiser l'input pour permettre de sélectionner les mêmes fichiers
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -259,35 +305,40 @@ export default function CreateServicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setSaving(true)
     setError(null)
 
-    // Validation
-    if (!formData.title || !formData.description || !formData.category || !formData.city) {
-      setError('Veuillez remplir tous les champs obligatoires')
-      setLoading(false)
+    if (!serviceId) {
+      setError('ID du service manquant')
+      setSaving(false)
       return
     }
 
-    // Au moins un prix doit être renseigné
+    if (!formData.title || !formData.description || !formData.category || !formData.city) {
+      setError('Veuillez remplir tous les champs obligatoires')
+      setSaving(false)
+      return
+    }
+
     if (!formData.price_per_hour && !formData.price_per_day && !formData.price_fixed) {
       setError('Veuillez renseigner au moins un type de prix')
-      setLoading(false)
+      setSaving(false)
       return
     }
 
     try {
-      // Uploader les images d'abord (avec compression automatique)
-      let finalImageUrls: string[] = []
+      // Uploader les nouvelles images d'abord
+      let finalImageUrls = [...uploadedImageUrls]
       
       if (selectedImages.length > 0) {
         setUploadingImages(true)
         try {
           // La compression se fait dans uploadNewImages
-          finalImageUrls = await uploadNewImages()
+          const newImageUrls = await uploadNewImages()
+          finalImageUrls = [...uploadedImageUrls, ...newImageUrls]
         } catch (uploadError: any) {
           setError(uploadError.message || 'Erreur lors de l\'upload des images')
-          setLoading(false)
+          setSaving(false)
           setUploadingImages(false)
           return
         } finally {
@@ -295,7 +346,7 @@ export default function CreateServicePage() {
         }
       }
 
-      const result = await createService({
+      const result = await updateService(serviceId, {
         title: formData.title,
         description: formData.description,
         category: formData.category as ServiceCategory,
@@ -309,26 +360,34 @@ export default function CreateServicePage() {
       if (result.error) {
         setError(result.error)
       } else {
-        // Rediriger vers le dashboard prestataire
-        router.push('/dashboard/provider')
+        router.push('/dashboard')
       }
     } catch (err) {
       setError('Une erreur est survenue')
     } finally {
-      setLoading(false)
+      setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Sparkles className="h-12 w-12 text-gold mx-auto mb-4 animate-pulse" />
+          <p className="text-muted-foreground">Chargement du service...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
-      {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-4xl mx-auto relative">
-        {/* Mobile: Full width header */}
         <div className="md:hidden mb-6 text-center">
           <div className="inline-flex items-center justify-center mb-4">
             <div className="h-12 w-12 rounded-xl bg-gold-gradient flex items-center justify-center glow-gold">
@@ -336,14 +395,11 @@ export default function CreateServicePage() {
             </div>
           </div>
           <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
-            Créer votre service
+            Modifier votre service
           </h1>
-          <p className="text-muted-foreground">
-            Remplissez les informations pour publier votre annonce
-          </p>
+          <p className="text-muted-foreground">Mettez à jour les informations de votre service</p>
         </div>
 
-        {/* Desktop: Card with glassmorphism */}
         <Card className="hidden md:block glass-gold glow-gold-strong border-gold/30 mb-6">
           <CardHeader className="text-center pb-6">
             <div className="inline-flex items-center justify-center mb-4">
@@ -351,16 +407,13 @@ export default function CreateServicePage() {
                 <Briefcase className="h-8 w-8 text-background" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-serif font-bold">
-              Créer votre service
-            </CardTitle>
+            <CardTitle className="text-3xl font-serif font-bold">Modifier votre service</CardTitle>
             <CardDescription className="text-base mt-2">
-              Remplissez les informations pour publier votre annonce
+              Mettez à jour les informations de votre service
             </CardDescription>
           </CardHeader>
         </Card>
 
-        {/* Form Card */}
         <Card className="glass-gold border-gold/30">
           <CardContent className="p-6 md:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -383,7 +436,7 @@ export default function CreateServicePage() {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
                   className="h-12 text-base"
-                  disabled={loading}
+                  disabled={saving}
                 />
               </div>
 
@@ -396,7 +449,7 @@ export default function CreateServicePage() {
                   value={formData.category}
                   onValueChange={(value) => setFormData({ ...formData, category: value as ServiceCategory })}
                   required
-                  disabled={loading}
+                  disabled={saving}
                 >
                   <SelectTrigger className="h-12 w-full text-base">
                     <SelectValue placeholder="Sélectionnez une catégorie" />
@@ -431,7 +484,7 @@ export default function CreateServicePage() {
                   required
                   rows={6}
                   className="text-base min-h-[120px]"
-                  disabled={loading}
+                  disabled={saving}
                 />
               </div>
 
@@ -448,7 +501,7 @@ export default function CreateServicePage() {
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   required
                   className="h-12 text-base"
-                  disabled={loading}
+                  disabled={saving}
                 />
               </div>
 
@@ -469,7 +522,7 @@ export default function CreateServicePage() {
                     onChange={handleImageSelect}
                     className="hidden"
                     id="image-upload"
-                    disabled={loading || uploadingImages}
+                    disabled={saving || uploadingImages}
                   />
 
                   {/* Bouton pour sélectionner les images */}
@@ -545,7 +598,7 @@ export default function CreateServicePage() {
                             <button
                               type="button"
                               onClick={() => handleRemoveImage(index)}
-                              disabled={uploadingImages || loading || preview.compressing}
+                              disabled={uploadingImages || saving || preview.compressing}
                               className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500/90 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
                             >
                               <X className="h-4 w-4" />
@@ -572,7 +625,7 @@ export default function CreateServicePage() {
                             <button
                               type="button"
                               onClick={() => handleRemoveUploadedImage(index)}
-                              disabled={loading || uploadingImages}
+                              disabled={saving || uploadingImages}
                               className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500/90 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <X className="h-4 w-4" />
@@ -586,7 +639,7 @@ export default function CreateServicePage() {
                 </div>
               </div>
 
-              {/* Prix - Desktop: 2 colonnes, Mobile: 1 colonne */}
+              {/* Prix */}
               <div className="space-y-4">
                 <Label className="text-base font-medium flex items-center gap-2">
                   <Euro className="h-4 w-4 text-gold" />
@@ -606,7 +659,7 @@ export default function CreateServicePage() {
                       value={formData.price_per_hour}
                       onChange={(e) => setFormData({ ...formData, price_per_hour: e.target.value })}
                       className="h-12 text-base"
-                      disabled={loading}
+                      disabled={saving}
                     />
                   </div>
                   <div className="space-y-2">
@@ -622,7 +675,7 @@ export default function CreateServicePage() {
                       value={formData.price_per_day}
                       onChange={(e) => setFormData({ ...formData, price_per_day: e.target.value })}
                       className="h-12 text-base"
-                      disabled={loading}
+                      disabled={saving}
                     />
                   </div>
                   <div className="space-y-2">
@@ -638,26 +691,26 @@ export default function CreateServicePage() {
                       value={formData.price_fixed}
                       onChange={(e) => setFormData({ ...formData, price_fixed: e.target.value })}
                       className="h-12 text-base"
-                      disabled={loading}
+                      disabled={saving}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Submit Button */}
+                  {/* Submit Button */}
               <div className="pt-4">
                 <Button
                   type="submit"
-                  disabled={loading || uploadingImages}
+                  disabled={saving || uploadingImages}
                   className="w-full h-12 md:h-11 bg-gold-gradient text-background hover:opacity-90 font-medium gold-shimmer glow-gold text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadingImages ? (
                     'Optimisation & Envoi des images...'
-                  ) : loading ? (
-                    'Publication en cours...'
+                  ) : saving ? (
+                    'Mise à jour en cours...'
                   ) : (
                     <>
-                      Publier mon service
+                      Mettre à jour le service
                       <ArrowRight className="h-5 w-5 md:h-4 md:w-4 ml-2" />
                     </>
                   )}

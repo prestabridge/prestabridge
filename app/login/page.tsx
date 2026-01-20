@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, signUp } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, Mail, Lock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -15,7 +15,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [redirectPath, setRedirectPath] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Récupérer le paramètre redirect depuis l'URL
+  useEffect(() => {
+    const redirect = searchParams.get('redirect')
+    if (redirect) {
+      setRedirectPath(redirect)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,9 +40,11 @@ export default function LoginPage() {
       if (result.error) {
         setError(result.error)
       } else {
-        // Rediriger vers onboarding si nouvel utilisateur, sinon vers dashboard
+        // Rediriger selon le contexte
         if (isSignUp) {
           router.push('/onboarding')
+        } else if (redirectPath) {
+          router.push(redirectPath)
         } else {
           router.push('/dashboard')
         }

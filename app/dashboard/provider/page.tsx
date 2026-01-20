@@ -2,8 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Briefcase, Plus, Package } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Briefcase, Plus, Package, Calendar, User, MessageSquare, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import Link from 'next/link'
+import { BookingActions } from '@/components/booking-actions'
 
 export default async function ProviderDashboardPage() {
   const supabase = await createClient()
@@ -32,6 +34,115 @@ export default async function ProviderDashboardPage() {
     .select('*')
     .eq('provider_id', user.id)
     .order('created_at', { ascending: false })
+
+  // Récupérer les réservations reçues (pour ce prestataire)
+  let receivedBookings: any[] = []
+
+  // Tentative 1 : Version complète (booking_date)
+  const { data: fullBookings, error: fullError } = await supabase
+    .from('bookings')
+    .select('id, booking_date, status, client_message, created_at, service_id, client_id')
+    .eq('provider_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (!fullError && fullBookings && fullBookings.length > 0) {
+    // Récupérer les profils clients et services
+    const clientIds = fullBookings.map((b: any) => b.client_id).filter(Boolean)
+    const serviceIds = fullBookings.map((b: any) => b.service_id).filter(Boolean)
+
+    const { data: clients } = await supabase
+      .from('profiles')
+      .select('id, first_name, last_name, email')
+      .in('id', clientIds)
+
+    const { data: servicesData } = await supabase
+      .from('services')
+      .select('id, title')
+      .in('id', serviceIds)
+
+    const clientsMap = new Map(clients?.map((c: any) => [c.id, c]) || [])
+    const servicesMap = new Map(servicesData?.map((s: any) => [s.id, s]) || [])
+
+    receivedBookings = fullBookings.map((booking: any) => ({
+      ...booking,
+      date: booking.booking_date,
+      client: clientsMap.get(booking.client_id) || null,
+      service: servicesMap.get(booking.service_id) || null,
+    }))
+  } else {
+    // Tentative 2 : Version simplifiée (date)
+    const { data: simpleBookings, error: simpleError } = await supabase
+      .from('bookings')
+      .select('id, date, status, message, created_at, service_id, client_id')
+      .eq('provider_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (!simpleError && simpleBookings && simpleBookings.length > 0) {
+      // Récupérer les profils clients et services
+      const clientIds = simpleBookings.map((b: any) => b.client_id).filter(Boolean)
+      const serviceIds = simpleBookings.map((b: any) => b.service_id).filter(Boolean)
+
+      const { data: clients } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email')
+        .in('id', clientIds)
+
+      const { data: servicesData } = await supabase
+        .from('services')
+        .select('id, title')
+        .in('id', serviceIds)
+
+      const clientsMap = new Map(clients?.map((c: any) => [c.id, c]) || [])
+      const servicesMap = new Map(servicesData?.map((s: any) => [s.id, s]) || [])
+
+      receivedBookings = simpleBookings.map((booking: any) => ({
+        ...booking,
+        client_message: booking.message,
+        client: clientsMap.get(booking.client_id) || null,
+        service: servicesMap.get(booking.service_id) || null,
+      }))
+    }
+  }
+
+  // Fonction pour obtenir le badge de statut
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+      pending: { label: 'En attente', variant: 'secondary' },
+      accepted: { label: 'Acceptée', variant: 'default' },
+      validated: { label: 'Validée', variant: 'default' },
+      rejected: { label: 'Refusée', variant: 'destructive' },
+      paid: { label: 'Payée', variant: 'default' },
+      completed: { label: 'Terminée', variant: 'default' },
+      cancelled: { label: 'Annulée', variant: 'destructive' },
+    }
+
+    const statusInfo = statusMap[status] || { label: status, variant: 'outline' as const }
+
+    return (
+      <Badge
+        variant={statusInfo.variant}
+        className={
+          status === 'pending'
+            ? 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20'
+            : status === 'accepted' || status === 'validated' || status === 'paid'
+            ? 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20'
+            : ''
+        }
+      >
+        {statusInfo.label}
+      </Badge>
+    )
+  }
+
+  // Formater la date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -124,6 +235,75 @@ export default async function ProviderDashboardPage() {
             </Card>
           )}
         </div>
+
+        {/* Section Demandes Reçues */}
+        {receivedBookings.length > 0 && (
+          <div className="mt-12 space-y-4">
+            <h2 className="text-xl font-serif font-bold text-foreground flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-gold" />
+              Demandes Reçues ({receivedBookings.length})
+            </h2>
+
+            <div className="space-y-4">
+              {receivedBookings.map((booking) => (
+                <Card key={booking.id} className="glass-gold border-gold/30">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <User className="h-4 w-4 text-gold" />
+                              <h3 className="font-semibold text-lg">
+                                {booking.client
+                                  ? `${booking.client.first_name || ''} ${booking.client.last_name || ''}`.trim() ||
+                                    booking.client.email
+                                  : 'Client inconnu'}
+                              </h3>
+                            </div>
+                            {booking.service && (
+                              <p className="text-sm text-muted-foreground mb-2">
+                                Service : <span className="font-medium">{booking.service.title}</span>
+                              </p>
+                            )}
+                            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-2">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                <span>{formatDate(booking.date || booking.booking_date)}</span>
+                              </div>
+                              {booking.created_at && (
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-4 w-4" />
+                                  <span>
+                                    Reçue le {new Date(booking.created_at).toLocaleDateString('fr-FR')}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            {booking.client_message && (
+                              <div className="mt-3 p-3 rounded-lg bg-background/50 border border-gold/10">
+                                <div className="flex items-start gap-2">
+                                  <MessageSquare className="h-4 w-4 text-gold mt-0.5 flex-shrink-0" />
+                                  <p className="text-sm text-muted-foreground">{booking.client_message}</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-shrink-0">{getStatusBadge(booking.status)}</div>
+                        </div>
+                      </div>
+                      {booking.status === 'pending' && (
+                        <div className="flex-shrink-0">
+                          <BookingActions bookingId={booking.id} />
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

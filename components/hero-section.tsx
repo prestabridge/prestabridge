@@ -4,6 +4,7 @@ import { useState } from "react"
 import { CalendarDays, MapPin, Wallet, Sparkles, PartyPopper } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
 import {
   Select,
   SelectContent,
@@ -124,9 +125,14 @@ export function HeroSection() {
 
           {/* CTA Button */}
           <div className="mt-6">
-            <Button className="w-full md:w-auto bg-gold-gradient text-background hover:opacity-90 font-semibold text-lg px-8 py-6 rounded-xl glow-gold-strong transition-all hover:scale-105 gold-shimmer">
-              <Sparkles className="mr-2 h-5 w-5" />
-              Générer ma Scène
+            <Button 
+              asChild
+              className="w-full md:w-auto bg-gold-gradient text-background hover:opacity-90 font-semibold text-lg px-8 py-6 rounded-xl glow-gold-strong transition-all hover:scale-105 gold-shimmer"
+            >
+              <Link href="/onboarding">
+                <Sparkles className="mr-2 h-5 w-5" />
+                Générer ma Scène
+              </Link>
             </Button>
           </div>
         </div>
