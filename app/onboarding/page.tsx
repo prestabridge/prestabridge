@@ -1,16 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { updateUserRole } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, User, Briefcase, ArrowRight, Check } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function OnboardingPage() {
   const [selectedRole, setSelectedRole] = useState<'client' | 'provider' | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const [quickPrefill, setQuickPrefill] = useState<{
+    eventType: string
+    location: string
+    budget: string
+    date: string
+  } | null>(null)
+
+  useEffect(() => {
+    const prefill = {
+      eventType: searchParams.get('eventType') || '',
+      location: searchParams.get('location') || '',
+      budget: searchParams.get('budget') || '',
+      date: searchParams.get('date') || '',
+    }
+    if (prefill.eventType || prefill.location || prefill.budget || prefill.date) {
+      setQuickPrefill(prefill)
+      sessionStorage.setItem('quickConfiguratorPrefill', JSON.stringify(prefill))
+    }
+  }, [searchParams])
 
   const handleContinue = async () => {
     if (!selectedRole) return
@@ -23,7 +43,12 @@ export default function OnboardingPage() {
       } else {
         // Redirection selon le rôle choisi
         if (selectedRole === 'client') {
-          router.push('/')
+          const params = new URLSearchParams()
+          if (quickPrefill?.eventType) params.set('eventType', quickPrefill.eventType)
+          if (quickPrefill?.location) params.set('location', quickPrefill.location)
+          if (quickPrefill?.budget) params.set('budget', quickPrefill.budget)
+          if (quickPrefill?.date) params.set('date', quickPrefill.date)
+          router.push(`/dashboard${params.toString() ? `?${params.toString()}` : ''}`)
         } else {
           // Prestataire : rediriger vers la création de service
           router.push('/dashboard/provider/create-service')
@@ -78,6 +103,12 @@ export default function OnboardingPage() {
         </Card>
 
         {/* Role selection cards */}
+        {quickPrefill && (
+          <div className="mb-6 rounded-xl border border-gold/30 bg-gold/5 p-4 text-sm text-muted-foreground">
+            Pré-remplissage détecté : {quickPrefill.eventType || 'Type libre'} - {quickPrefill.location || 'Lieu libre'} - Budget {quickPrefill.budget || '?'} - {quickPrefill.date || 'Date libre'}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
           {/* Client Card */}
           <Card

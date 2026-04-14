@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 interface ServiceCardProps {
   id: string
+  provider_id?: string
   title: string
   description: string
   category: string
@@ -18,6 +19,7 @@ interface ServiceCardProps {
 
 export function ServiceCard({
   id,
+  provider_id,
   title,
   description,
   category,
@@ -50,8 +52,10 @@ export function ServiceCard({
       .join(' ')
   }
 
+  const cardHref = provider_id ? `/vendor/${provider_id}` : `/service/${id}`
+
   return (
-    <Link href={`/service/${id}`}>
+    <Link href={cardHref}>
       <Card className="glass-gold border-gold/30 hover-glow transition-all duration-300 group cursor-pointer overflow-hidden h-full flex flex-col">
         {/* Image */}
         <div className="relative w-full h-48 md:h-56 overflow-hidden bg-gradient-to-br from-gold/20 to-gold/5">

@@ -47,6 +47,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   // ============================================
   // RÉCUPÉRATION DES DONNÉES CLIENT
   // ============================================
+  const { data: myProjects } = await supabase
+    .from('project_specs')
+    .select('id, event_date, event_time_start, created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
   // Réservations envoyées (côté client)
   let sentBookings: any[] = []
 
@@ -409,6 +416,42 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </div>
                         )}
                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Mes Documents */}
+          <Card className="glass-gold border-gold/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-gold" />
+                Mes Documents
+              </CardTitle>
+              <CardDescription>Retrouvez vos projets avec planning et devis exportable PDF.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!myProjects || myProjects.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Aucun document disponible pour le moment.</p>
+              ) : (
+                <div className="space-y-3">
+                  {myProjects.map((project: any) => (
+                    <div key={project.id} className="p-3 rounded-lg border border-gold/20 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-medium">
+                          Projet du {new Date(project.event_date).toLocaleDateString('fr-FR')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Début: {project.event_time_start || '--:--'}
+                        </p>
+                      </div>
+                      <Link href={`/dashboard/projects/${project.id}`}>
+                        <Button variant="outline" size="sm">
+                          Ouvrir
+                        </Button>
+                      </Link>
                     </div>
                   ))}
                 </div>

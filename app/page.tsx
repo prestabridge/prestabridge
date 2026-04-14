@@ -5,7 +5,9 @@ import { TrustSection } from "@/components/trust-section"
 import { Footer } from "@/components/footer"
 import { ServiceCard } from "@/components/service-card"
 import { createClient } from "@/lib/supabase/server"
-import { Sparkles } from "lucide-react"
+import { Sparkles, Wand2, GlassWater, MailPlus } from "lucide-react"
+import Link from "next/link"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function Home() {
   const supabase = await createClient()
@@ -13,7 +15,7 @@ export default async function Home() {
   // Récupérer les services actifs
   const { data: services } = await supabase
     .from('services')
-    .select('id, title, description, category, city, price_per_hour, price_per_day, price_fixed, price_start, images')
+    .select('id, provider_id, title, description, category, city, price_per_hour, price_per_day, price_fixed, price_start, images')
     .eq('is_active', true)
     .order('created_at', { ascending: false })
     .limit(6)
@@ -47,6 +49,7 @@ export default async function Home() {
                 <ServiceCard
                   key={service.id}
                   id={service.id}
+                  provider_id={service.provider_id}
                   title={service.title}
                   description={service.description || ''}
                   category={service.category}
@@ -62,6 +65,59 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      {/* Section Magic Hub */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-10">
+            <p className="text-gold-gradient uppercase tracking-[0.3em] text-sm mb-4 font-semibold">
+              Intelligence Artificielle
+            </p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground mb-4 text-balance">
+              Le Magic Hub : <span className="text-gold-gradient">L&apos;IA à votre service</span>
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
+              Trois outils premium pour accélérer la création de votre événement.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Link href="/magic/moodboard">
+              <Card className="h-full glass-gold border-gold/30 hover-glow transition-all duration-300 cursor-pointer">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-gold-gradient flex items-center justify-center mb-3 glow-gold">
+                    <Wand2 className="h-6 w-6 text-background" />
+                  </div>
+                  <CardTitle>Instant Moodboard</CardTitle>
+                  <CardDescription>Analyse visuelle d&apos;inspiration + matching prestataires.</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+            <Link href="/magic/thirst">
+              <Card className="h-full glass-gold border-gold/30 hover-glow transition-all duration-300 cursor-pointer">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-gold-gradient flex items-center justify-center mb-3 glow-gold">
+                    <GlassWater className="h-6 w-6 text-background" />
+                  </div>
+                  <CardTitle>Thirst Calculator</CardTitle>
+                  <CardDescription>Calcul intelligent des quantités de boissons.</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+            <Link href="/magic/invit">
+              <Card className="h-full glass-gold border-gold/30 hover-glow transition-all duration-300 cursor-pointer">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-gold-gradient flex items-center justify-center mb-3 glow-gold">
+                    <MailPlus className="h-6 w-6 text-background" />
+                  </div>
+                  <CardTitle>Invit&apos;IA</CardTitle>
+                  <CardDescription>Génération et partage d&apos;invitations premium.</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* État vide si aucun service */}
       {(!services || services.length === 0) && (

@@ -19,6 +19,13 @@ export function HeroSection() {
   const [budget, setBudget] = useState("")
   const [date, setDate] = useState("")
 
+  const quickParams = new URLSearchParams()
+  if (eventType) quickParams.set("eventType", eventType)
+  if (location) quickParams.set("location", location)
+  if (budget) quickParams.set("budget", budget)
+  if (date) quickParams.set("date", date)
+  const onboardingHref = `/onboarding${quickParams.toString() ? `?${quickParams.toString()}` : ""}`
+
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
       {/* Background gradient - Champagne Gold Luxury */}
@@ -129,7 +136,7 @@ export function HeroSection() {
               asChild
               className="w-full md:w-auto bg-gold-gradient text-background hover:opacity-90 font-semibold text-lg px-8 py-6 rounded-xl glow-gold-strong transition-all hover:scale-105 gold-shimmer"
             >
-              <Link href="/onboarding">
+              <Link href={onboardingHref}>
                 <Sparkles className="mr-2 h-5 w-5" />
                 Générer ma Scène
               </Link>

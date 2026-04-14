@@ -80,6 +80,23 @@ export function Configurator({ mode }: ConfiguratorProps) {
     }
   }, [])
 
+  useEffect(() => {
+    const raw = sessionStorage.getItem('quickConfiguratorPrefill')
+    if (!raw) return
+    try {
+      const parsed = JSON.parse(raw)
+      setOptions((prev) => ({
+        ...prev,
+        budget_global: parsed.budget || prev.budget_global,
+        event_date: parsed.date || prev.event_date,
+        event_type: parsed.eventType || prev.event_type,
+      }))
+      sessionStorage.removeItem('quickConfiguratorPrefill')
+    } catch {
+      // ignore invalid prefill
+    }
+  }, [])
+
   const handleSubmit = async () => {
     setError(null)
     
