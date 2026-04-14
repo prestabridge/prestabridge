@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { updateUserRole } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, User, Briefcase, ArrowRight, Check } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const [selectedRole, setSelectedRole] = useState<'client' | 'provider' | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -208,5 +208,13 @@ export default function OnboardingPage() {
         </Button>
       </div>
     </div>
+  )
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <OnboardingContent />
+    </Suspense>
   )
 }

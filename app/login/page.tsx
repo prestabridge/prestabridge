@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { signIn, signUp } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,7 +9,7 @@ import { Sparkles, Mail, Lock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+function LoginContent() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -250,5 +250,13 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
