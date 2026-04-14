@@ -211,6 +211,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
     > = {
       pending: { label: 'En attente', variant: 'secondary' },
+      pending_payment: { label: 'Paiement à confirmer', variant: 'secondary' },
+      pending_vendor_validation: { label: 'En attente prestataire', variant: 'secondary' },
       accepted: { label: 'Validé', variant: 'default' },
       validated: { label: 'Validé', variant: 'default' },
       rejected: { label: 'Refusé', variant: 'destructive' },
@@ -223,7 +225,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
     // Déterminer les classes CSS selon le statut
     let badgeClasses = ''
-    if (status === 'pending') {
+    if (status === 'pending' || status === 'pending_payment' || status === 'pending_vendor_validation') {
       badgeClasses = 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20'
     } else if (status === 'accepted' || status === 'validated' || status === 'paid') {
       badgeClasses = 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20'
@@ -386,10 +388,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                             </div>
                             <div className="flex-shrink-0">{getStatusBadge(booking.status)}</div>
                           </div>
-                          {booking.status === 'pending' && (
+                          {(booking.status === 'pending' || booking.status === 'pending_vendor_validation') && (
                             <div className="flex items-center gap-2 text-sm text-yellow-700 dark:text-yellow-400 mt-2">
                               <Clock className="h-4 w-4" />
-                              <span>En attente de validation du prestataire</span>
+                              <span>
+                                {booking.status === 'pending_vendor_validation'
+                                  ? 'En attente prestataire'
+                                  : 'En attente de validation du prestataire'}
+                              </span>
                             </div>
                           )}
                         </div>
