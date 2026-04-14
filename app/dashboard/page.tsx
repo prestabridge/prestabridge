@@ -283,7 +283,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <Card className="glass-gold border-gold/30 hover-glow cursor-pointer">
-            <Link href="/onboarding">
+            <Link href="/dashboard/configurator">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-gold-gradient flex items-center justify-center glow-gold">

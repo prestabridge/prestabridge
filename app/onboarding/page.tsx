@@ -18,6 +18,7 @@ function OnboardingContent() {
     budget: string
     date: string
   } | null>(null)
+  const [autoRouting, setAutoRouting] = useState(false)
 
   useEffect(() => {
     const prefill = {
@@ -26,9 +27,31 @@ function OnboardingContent() {
       budget: searchParams.get('budget') || '',
       date: searchParams.get('date') || '',
     }
-    if (prefill.eventType || prefill.location || prefill.budget || prefill.date) {
-      setQuickPrefill(prefill)
-      sessionStorage.setItem('quickConfiguratorPrefill', JSON.stringify(prefill))
+    const hasPrefill =
+      Boolean(prefill.eventType) ||
+      Boolean(prefill.location) ||
+      Boolean(prefill.budget) ||
+      Boolean(prefill.date)
+
+    if (!hasPrefill) return
+
+    setQuickPrefill(prefill)
+    sessionStorage.setItem('quickConfiguratorPrefill', JSON.stringify(prefill))
+    localStorage.setItem('quickConfiguratorPrefill', JSON.stringify(prefill))
+
+    let mounted = true
+    const routeAsClient = async () => {
+      setAutoRouting(true)
+      try {
+        await updateUserRole('client')
+      } finally {
+        if (mounted) router.replace('/dashboard/configurator')
+      }
+    }
+    void routeAsClient()
+
+    return () => {
+      mounted = false
     }
   }, [searchParams])
 
@@ -48,7 +71,7 @@ function OnboardingContent() {
           if (quickPrefill?.location) params.set('location', quickPrefill.location)
           if (quickPrefill?.budget) params.set('budget', quickPrefill.budget)
           if (quickPrefill?.date) params.set('date', quickPrefill.date)
-          router.push(`/dashboard${params.toString() ? `?${params.toString()}` : ''}`)
+          router.push(`/dashboard/configurator${params.toString() ? `?${params.toString()}` : ''}`)
         } else {
           // Prestataire : rediriger vers la création de service
           router.push('/dashboard/provider/create-service')
@@ -70,6 +93,12 @@ function OnboardingContent() {
       </div>
 
       <div className="w-full max-w-2xl">
+        {autoRouting && (
+          <div className="mb-4 rounded-xl border border-gold/30 bg-gold/5 p-4 text-sm text-muted-foreground">
+            Nous préparons votre configurateur avec vos critères...
+          </div>
+        )}
+
         {/* Mobile: Full width */}
         <div className="md:hidden mb-8 text-center">
           <div className="inline-flex items-center justify-center mb-4">

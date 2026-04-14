@@ -49,7 +49,10 @@ export async function middleware(request: NextRequest) {
   if (!user && isProtectedRoute) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
-    redirectUrl.searchParams.set('redirect', pathname)
+    redirectUrl.searchParams.set(
+      'redirect',
+      `${pathname}${request.nextUrl.search || ''}`
+    )
     return NextResponse.redirect(redirectUrl)
   }
 
@@ -72,6 +75,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|manifest\\.webmanifest|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|js|json|webmanifest)$).*)',
   ],
 }

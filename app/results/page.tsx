@@ -137,6 +137,9 @@ function ResultsContent() {
         return
       }
 
+      sessionStorage.removeItem('quickConfiguratorPrefill')
+      localStorage.removeItem('quickConfiguratorPrefill')
+
       router.push(`/checkout?pi=${encodeURIComponent(result.paymentIntentId)}`)
     } catch (error) {
       console.error("Erreur lors de la validation", error)

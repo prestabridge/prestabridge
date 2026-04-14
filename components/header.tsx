@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { signOut } from "@/app/actions/auth"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -14,6 +14,8 @@ export function Header() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const pathname = usePathname()
+  const isConfiguratorPage = pathname.startsWith("/dashboard/configurator")
 
   useEffect(() => {
     const supabase = createClient()
@@ -62,7 +64,7 @@ export function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-gold">
+    <header className="sticky top-0 left-0 right-0 z-50 glass-gold">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -80,19 +82,19 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="#explorer"
+              href="/#explorer"
               className="text-sm text-muted-foreground hover:text-gold transition-colors"
             >
               Explorer
             </Link>
             <Link
-              href="#comment"
+              href="/#comment"
               className="text-sm text-muted-foreground hover:text-gold transition-colors"
             >
               Comment ça marche
             </Link>
             <Link
-              href="#devenir"
+              href="/#devenir"
               className="text-sm text-muted-foreground hover:text-gold transition-colors"
             >
               Devenir Prestataire
@@ -101,6 +103,15 @@ export function Header() {
 
           {/* CTA Buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
+            {isConfiguratorPage && (
+              <Button
+                asChild
+                variant="outline"
+                className="border-gold/30 hover:border-gold"
+              >
+                <Link href="/dashboard">Quitter le configurateur</Link>
+              </Button>
+            )}
             {loading ? (
               <div className="h-9 w-20 bg-secondary animate-pulse rounded-md" />
             ) : user ? (
@@ -170,22 +181,32 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col gap-4">
+              {isConfiguratorPage && (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full border-gold/30 hover:border-gold"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link href="/dashboard">Quitter le configurateur</Link>
+                </Button>
+              )}
               <Link
-                href="#explorer"
+                href="/#explorer"
                 className="text-sm text-muted-foreground hover:text-gold transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Explorer
               </Link>
               <Link
-                href="#comment"
+                href="/#comment"
                 className="text-sm text-muted-foreground hover:text-gold transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Comment ça marche
               </Link>
               <Link
-                href="#devenir"
+                href="/#devenir"
                 className="text-sm text-muted-foreground hover:text-gold transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >

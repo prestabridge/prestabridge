@@ -42,7 +42,7 @@ function LoginContent() {
       } else {
         // Rediriger selon le contexte
         if (isSignUp) {
-          router.push('/onboarding')
+          router.push(redirectPath || '/onboarding')
         } else if (redirectPath) {
           router.push(redirectPath)
         } else {

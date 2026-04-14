@@ -9,29 +9,29 @@ import { Button } from "@/components/ui/button"
 
 const footerLinks = {
   produit: [
-    { label: "Explorer", href: "#explorer" },
-    { label: "Comment ça marche", href: "#comment" },
-    { label: "Tarifs", href: "#tarifs" },
-    { label: "API", href: "#api" }
+    { label: "Explorer", href: "/#explorer" },
+    { label: "Comment ça marche", href: "/#comment" },
+    { label: "Tarifs", href: "/dashboard" },
+    { label: "API", href: "/magic" }
   ],
   prestataires: [
-    { label: "Devenir Prestataire", href: "#devenir" },
-    { label: "Espace Pro", href: "#pro" },
-    { label: "Formations", href: "#formations" },
-    { label: "Partenariats", href: "#partenariats" }
+    { label: "Devenir Prestataire", href: "/#devenir" },
+    { label: "Espace Pro", href: "/dashboard/provider" },
+    { label: "Formations", href: "/dashboard/provider/create-service" },
+    { label: "Partenariats", href: "/dashboard/provider" }
   ],
   legal: [
-    { label: "Mentions Légales", href: "#mentions" },
-    { label: "CGV", href: "#cgv" },
-    { label: "Confidentialité", href: "#confidentialite" },
-    { label: "Cookies", href: "#cookies" }
+    { label: "Mentions Légales", href: "/dashboard" },
+    { label: "CGV", href: "/dashboard" },
+    { label: "Confidentialité", href: "/dashboard" },
+    { label: "Cookies", href: "/dashboard" }
   ]
 }
 
 const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Twitter, href: "#", label: "Twitter" }
+  { icon: Instagram, href: "/", label: "Instagram" },
+  { icon: Linkedin, href: "/", label: "LinkedIn" },
+  { icon: Twitter, href: "/", label: "Twitter" }
 ]
 
 export function Footer() {
@@ -49,7 +49,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
-            <a href="#" className="flex items-center gap-2 mb-6">
+            <a href="/" className="flex items-center gap-2 mb-6">
               <div className="h-8 w-8 rounded-lg bg-gold-gradient flex items-center justify-center glow-gold">
                 <span className="text-background font-bold text-sm">PB</span>
               </div>

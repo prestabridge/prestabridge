@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useEffect } from "react"
 import { CalendarDays, MapPin, Wallet, Sparkles, PartyPopper } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,6 +19,33 @@ export function HeroSection() {
   const [location, setLocation] = useState("")
   const [budget, setBudget] = useState("")
   const [date, setDate] = useState("")
+
+  useEffect(() => {
+    const raw = localStorage.getItem('quickConfiguratorPrefill')
+    if (!raw) return
+
+    try {
+      const parsed = JSON.parse(raw) as {
+        eventType?: string
+        location?: string
+        budget?: string
+        date?: string
+      }
+
+      if (parsed.eventType) setEventType(parsed.eventType)
+      if (parsed.location) setLocation(parsed.location)
+      if (parsed.budget) setBudget(parsed.budget)
+      if (parsed.date) setDate(parsed.date)
+    } catch {
+      // ignore invalid saved payload
+    }
+  }, [])
+
+  useEffect(() => {
+    const payload = { eventType, location, budget, date }
+    localStorage.setItem('quickConfiguratorPrefill', JSON.stringify(payload))
+    sessionStorage.setItem('quickConfiguratorPrefill', JSON.stringify(payload))
+  }, [eventType, location, budget, date])
 
   const quickParams = new URLSearchParams()
   if (eventType) quickParams.set("eventType", eventType)
@@ -65,7 +93,7 @@ export function HeroSection() {
                 Type d&apos;événement
               </label>
               <Select value={eventType} onValueChange={setEventType}>
-                <SelectTrigger className="bg-secondary border-border hover:border-gold transition-colors">
+                <SelectTrigger className="bg-secondary border-border hover:border-gold transition-colors text-base md:text-sm">
                   <SelectValue placeholder="Sélectionner..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -90,7 +118,7 @@ export function HeroSection() {
                 placeholder="Paris, Lyon..."
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="bg-secondary border-border hover:border-gold focus:border-gold transition-colors"
+                className="bg-secondary border-border hover:border-gold focus:border-gold transition-colors text-base md:text-sm"
               />
             </div>
 
@@ -101,7 +129,7 @@ export function HeroSection() {
                 Budget Global
               </label>
               <Select value={budget} onValueChange={setBudget}>
-                <SelectTrigger className="bg-secondary border-border hover:border-gold transition-colors">
+                <SelectTrigger className="bg-secondary border-border hover:border-gold transition-colors text-base md:text-sm">
                   <SelectValue placeholder="Sélectionner..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -125,7 +153,7 @@ export function HeroSection() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="bg-secondary border-border hover:border-gold focus:border-gold transition-colors"
+                className="bg-secondary border-border hover:border-gold focus:border-gold transition-colors text-base md:text-sm"
               />
             </div>
           </div>

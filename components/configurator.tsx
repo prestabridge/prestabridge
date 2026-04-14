@@ -82,16 +82,17 @@ export function Configurator({ mode }: ConfiguratorProps) {
 
   useEffect(() => {
     const raw = sessionStorage.getItem('quickConfiguratorPrefill')
-    if (!raw) return
+    const fallbackRaw = localStorage.getItem('quickConfiguratorPrefill')
+    const source = raw || fallbackRaw
+    if (!source) return
     try {
-      const parsed = JSON.parse(raw)
+      const parsed = JSON.parse(source)
       setOptions((prev) => ({
         ...prev,
         budget_global: parsed.budget || prev.budget_global,
         event_date: parsed.date || prev.event_date,
         event_type: parsed.eventType || prev.event_type,
       }))
-      sessionStorage.removeItem('quickConfiguratorPrefill')
     } catch {
       // ignore invalid prefill
     }
