@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, LogOut, User } from "lucide-react"
+import { Menu, X, LogOut, User, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -141,6 +141,18 @@ export function Header() {
                     </Link>
                   </Button>
                 )}
+                {profile?.role === 'admin' && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-gold/30 hover:border-gold"
+                  >
+                    <Link href="/admin/analytics">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Analytics
+                    </Link>
+                  </Button>
+                )}
                 <form action={handleSignOut}>
                   <Button 
                     type="submit"
@@ -248,6 +260,19 @@ export function Header() {
                     >
                       <Link href="/dashboard/provider/create-service">
                         Créer un service
+                      </Link>
+                    </Button>
+                  )}
+                  {profile?.role === 'admin' && (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full border-gold/30 hover:border-gold"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link href="/admin/analytics">
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        Analytics
                       </Link>
                     </Button>
                   )}

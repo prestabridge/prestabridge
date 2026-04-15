@@ -25,7 +25,7 @@ export default async function Home() {
       
       {/* Section Services - Vitrine */}
       {services && services.length > 0 && (
-        <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <section id="devenir" className="py-24 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             {/* Section Header */}
             <div className="text-center mb-12">
@@ -64,7 +64,7 @@ export default async function Home() {
       )}
 
       {/* Section Magic Hub */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="comment" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-10">
             <p className="text-gold-gradient uppercase tracking-[0.3em] text-sm mb-4 font-semibold">
