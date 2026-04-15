@@ -80,32 +80,37 @@ Regles:
 - Ton professionnel et concret
 `.trim()
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${key}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      temperature: 0.4,
-      messages: [
-        { role: 'system', content: 'Tu reponds uniquement en JSON valide.' },
-        { role: 'user', content: prompt },
-      ],
-    }),
-  })
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        temperature: 0.4,
+        messages: [
+          { role: 'system', content: 'Tu reponds uniquement en JSON valide.' },
+          { role: 'user', content: prompt },
+        ],
+      }),
+    })
 
-  if (!response.ok) return { error: "L'IA n'a pas pu générer le planning." }
-  const data = await response.json()
-  const content = data?.choices?.[0]?.message?.content ?? '[]'
-  const timeline = normalizeTimeline(content)
-  if (!timeline.length) return { error: 'Planning IA invalide, réessayez.' }
+    if (!response.ok) return { error: "L'IA n'a pas pu générer le planning." }
+    const data = await response.json()
+    const content = data?.choices?.[0]?.message?.content ?? '[]'
+    const timeline = normalizeTimeline(content)
+    if (!timeline.length) return { error: 'Planning IA invalide, réessayez.' }
 
-  await supabase
-    .from('project_specs')
-    .update({ run_of_show: timeline } as any)
-    .eq('id', input.projectSpecId)
+    await supabase
+      .from('project_specs')
+      .update({ run_of_show: timeline } as any)
+      .eq('id', input.projectSpecId)
 
-  return { success: true, timeline }
+    return { success: true, timeline }
+  } catch (err) {
+    console.error('ERREUR IA RUN-OF-SHOW:', err)
+    return { error: "Une erreur inattendue est survenue lors de la génération du planning." }
+  }
 }

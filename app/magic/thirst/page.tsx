@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 import { calculateThirstPlan, saveDrinksPlanToProject } from '@/app/actions/ai-thirst'
 
 type ThirstResult = {
@@ -58,6 +60,9 @@ export default function ThirstPage() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
+        <Button asChild variant="ghost" className="mb-0">
+          <Link href="/magic"><ArrowLeft className="h-4 w-4 mr-2" />Magic Hub</Link>
+        </Button>
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-serif font-bold">
             Thirst <span className="text-gold-gradient">Calculator</span>

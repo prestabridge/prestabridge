@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { generateProjectDraft } from "@/app/actions/project-specs"
 import { useRouter } from "next/navigation"
+import type { MusicVibe } from "@/src/types/supabase"
 
 interface ConfiguratorProps {
   mode: "ai-pack" | "custom"
@@ -65,6 +66,15 @@ export function Configurator({ mode }: ConfiguratorProps) {
         ? prev.restrictions.filter(r => r !== restriction)
         : [...prev.restrictions, restriction]
     }))
+  }
+
+  const mapAmbianceToMusicVibe = (
+    ambiance: OptionValue["ambiance"]
+  ): MusicVibe | null => {
+    if (ambiance === "party") return "dansant"
+    if (ambiance === "spectacle") return "spectacle"
+    if (ambiance === "lounge") return "lounge"
+    return null
   }
 
   useEffect(() => {
@@ -116,7 +126,7 @@ export function Configurator({ mode }: ConfiguratorProps) {
         event_type: options.event_type as any,
         event_objective: options.event_objective as any,
         audience: options.audience,
-        ambiance: options.ambiance as any,
+        ambiance: mapAmbianceToMusicVibe(options.ambiance),
         lieu: options.lieu,
         restrictions: options.restrictions,
         mood_tags: moodTags,
@@ -151,7 +161,7 @@ export function Configurator({ mode }: ConfiguratorProps) {
   const today = new Date().toISOString().split('T')[0]
 
   return (
-    <div className="glass-gold rounded-2xl p-6 md:p-8 animate-in slide-in-from-top-4 duration-500 gold-border-glow">
+    <div className="glass-gold rounded-2xl p-6 md:p-8 animate-in slide-in-from-top-4 duration-500 gold-border-glow overflow-x-hidden">
       <div className="mb-8">
         <h3 className="text-2xl font-serif text-foreground mb-2">
           Configurateur de Détails
@@ -305,7 +315,7 @@ export function Configurator({ mode }: ConfiguratorProps) {
                   type="button"
                   onClick={() => setOptions(prev => ({ ...prev, ambiance: id as OptionValue["ambiance"] }))}
                   className={cn(
-                    "flex items-center gap-2 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
+                    "flex items-center gap-2 py-3 px-3 rounded-lg border text-sm font-medium transition-all",
                     options.ambiance === id
                       ? "bg-gold-gradient text-background border-gold glow-gold"
                       : "bg-secondary border-border text-foreground hover:border-gold hover:bg-[oklch(0.78_0.11_65_/_0.1)]"
@@ -335,7 +345,7 @@ export function Configurator({ mode }: ConfiguratorProps) {
                   type="button"
                   onClick={() => setOptions(prev => ({ ...prev, lieu: id as OptionValue["lieu"] }))}
                   className={cn(
-                    "flex items-center gap-2 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
+                    "flex items-center gap-2 py-3 px-3 rounded-lg border text-sm font-medium transition-all",
                     options.lieu === id
                       ? "bg-gold-gradient text-background border-gold glow-gold"
                       : "bg-secondary border-border text-foreground hover:border-gold hover:bg-[oklch(0.78_0.11_65_/_0.1)]"
@@ -365,7 +375,7 @@ export function Configurator({ mode }: ConfiguratorProps) {
                   type="button"
                   onClick={() => toggleRestriction(id)}
                   className={cn(
-                    "flex items-center gap-2 py-2 px-3 rounded-lg border text-sm font-medium transition-all",
+                    "flex items-center gap-2 py-3 px-3 rounded-lg border text-sm font-medium transition-all",
                     options.restrictions.includes(id)
                       ? "bg-gold-gradient text-background border-gold glow-gold"
                       : "bg-secondary border-border text-foreground hover:border-gold hover:bg-[oklch(0.78_0.11_65_/_0.1)]"

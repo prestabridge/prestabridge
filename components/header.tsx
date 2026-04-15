@@ -59,6 +59,11 @@ export function Header() {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileMenuOpen])
+
   const handleSignOut = async () => {
     await signOut()
   }
@@ -177,10 +182,18 @@ export function Header() {
           </button>
         </div>
 
+        {/* Mobile overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 top-16 z-40 bg-black/60 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <nav className="flex flex-col gap-4">
+          <div className="md:hidden py-4 border-t border-border relative z-50">
+            <nav className="flex flex-col gap-1">
               {isConfiguratorPage && (
                 <Button
                   asChild
@@ -193,21 +206,21 @@ export function Header() {
               )}
               <Link
                 href="/#explorer"
-                className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                className="block py-3 px-2 text-sm text-muted-foreground hover:text-gold transition-colors rounded-lg active:bg-gold/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Explorer
               </Link>
               <Link
                 href="/#comment"
-                className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                className="block py-3 px-2 text-sm text-muted-foreground hover:text-gold transition-colors rounded-lg active:bg-gold/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Comment ça marche
               </Link>
               <Link
                 href="/#devenir"
-                className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                className="block py-3 px-2 text-sm text-muted-foreground hover:text-gold transition-colors rounded-lg active:bg-gold/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Devenir Prestataire

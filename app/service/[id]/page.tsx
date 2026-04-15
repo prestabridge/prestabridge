@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { MapPin, Euro, ArrowLeft, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ServiceImageGallery } from '@/components/service-image-gallery'
 
 export default async function ServiceDetailPage({
   params,
@@ -112,8 +113,8 @@ export default async function ServiceDetailPage({
               asChild
               className="w-full h-12 bg-gold-gradient text-background hover:opacity-90 font-medium gold-shimmer glow-gold text-base"
             >
-              <Link href={`/checkout/${service.id}`}>
-                Réserver ce service
+              <Link href="/dashboard/configurator">
+                Réserver via le Configurateur
               </Link>
             </Button>
           </div>

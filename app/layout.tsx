@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Header } from '@/components/header'
+import { Footer } from '@/components/footer'
 import { PwaInstallPrompt } from '@/components/pwa-install-prompt'
 import { PwaRegister } from '@/components/pwa-register'
 import './globals.css'
@@ -71,6 +72,7 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${inter.variable} font-sans antialiased`}>
         <Header />
         {children}
+        <Footer />
         <PwaRegister />
         <PwaInstallPrompt />
         <Analytics />

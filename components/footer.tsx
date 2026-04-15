@@ -44,7 +44,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-card border-t border-[oklch(0.45_0.12_85_/_0.3)]">
+    <footer className="bg-card border-t border-gold/30">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand & Newsletter */}
@@ -87,12 +87,12 @@ export function Footer() {
           {/* Produit Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Produit</h4>
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {footerLinks.produit.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground hover:text-gold transition-colors text-sm"
+                    className="block py-1.5 text-muted-foreground hover:text-gold transition-colors text-sm"
                   >
                     {link.label}
                   </a>
@@ -104,12 +104,12 @@ export function Footer() {
           {/* Prestataires Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Prestataires</h4>
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {footerLinks.prestataires.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground hover:text-gold transition-colors text-sm"
+                    className="block py-1.5 text-muted-foreground hover:text-gold transition-colors text-sm"
                   >
                     {link.label}
                   </a>
@@ -121,12 +121,12 @@ export function Footer() {
           {/* Legal Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Légal</h4>
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground hover:text-gold transition-colors text-sm"
+                    className="block py-1.5 text-muted-foreground hover:text-gold transition-colors text-sm"
                   >
                     {link.label}
                   </a>

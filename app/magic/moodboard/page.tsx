@@ -1,12 +1,13 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { UploadCloud, Sparkles } from 'lucide-react'
+import { UploadCloud, Sparkles, ArrowLeft } from 'lucide-react'
 import { analyzeMoodboardImage } from '@/app/actions/ai-vision'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ServiceCard } from '@/components/service-card'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 type MoodboardService = {
   id: string
@@ -83,6 +84,9 @@ export default function MoodboardPage() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
+        <Button asChild variant="ghost" className="mb-0">
+          <Link href="/magic"><ArrowLeft className="h-4 w-4 mr-2" />Magic Hub</Link>
+        </Button>
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-serif font-bold">
             Instant <span className="text-gold-gradient">Moodboard</span>

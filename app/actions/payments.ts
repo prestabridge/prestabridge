@@ -182,26 +182,42 @@ export async function finalizeManualHoldAndNotify(input: { paymentIntentId: stri
   }
 
   if (paymentIntent.status !== 'requires_capture') {
+    const { data: alreadyDone } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('stripe_payment_intent_id', input.paymentIntentId)
+      .eq('client_id', user.id)
+      .in('status', ['pending_vendor_validation', 'validated', 'accepted'])
+
+    if (alreadyDone && alreadyDone.length > 0) {
+      return { success: true, bookingIds: alreadyDone.map((b) => b.id), appliedStatus: 'already_processed' }
+    }
+
     return { error: `Statut paiement invalide: ${paymentIntent.status}` }
   }
 
   const { data: bookings, error: bookingsError } = await supabase
     .from('bookings')
-    .select('id')
+    .select('id, status')
     .eq('stripe_payment_intent_id', input.paymentIntentId)
     .eq('client_id', user.id)
 
   if (bookingsError || !bookings?.length) return { error: 'Réservations liées au paiement introuvables' }
-  const bookingIds = bookings.map((b) => b.id)
 
-  const appliedStatus = await tryBookingStatusUpdate(supabase, bookingIds, 'pending_vendor_validation', 'validated')
-  await triggerVendorNotifications(bookingIds)
+  const pendingBookings = bookings.filter((b: { status: string }) => b.status === 'pending_payment' || b.status === 'pending')
+  if (pendingBookings.length === 0) {
+    return { success: true, bookingIds: bookings.map((b) => b.id), appliedStatus: 'already_processed' }
+  }
+
+  const pendingIds = pendingBookings.map((b) => b.id)
+  const appliedStatus = await tryBookingStatusUpdate(supabase, pendingIds, 'pending_vendor_validation', 'validated')
+  await triggerVendorNotifications(pendingIds)
   await supabase
     .from('bookings')
     .update({ last_notified_at: new Date().toISOString() })
-    .in('id', bookingIds)
+    .in('id', pendingIds)
 
-  return { success: true, bookingIds, appliedStatus }
+  return { success: true, bookingIds: pendingIds, appliedStatus }
 }
 
 export async function getCheckoutSummary(paymentIntentId: string) {

@@ -187,9 +187,11 @@
     transition: all 0.3s ease;
   }
   
-  .hover-glow:hover {
-    box-shadow: 0 0 45px oklch(0.78 0.11 65 / 0.45), 0 0 70px oklch(0.78 0.11 65 / 0.25);
-    border-color: var(--gold);
+  @media (hover: hover) {
+    .hover-glow:hover {
+      box-shadow: 0 0 45px oklch(0.78 0.11 65 / 0.45), 0 0 70px oklch(0.78 0.11 65 / 0.25);
+      border-color: var(--gold);
+    }
   }
   
   .gold-shimmer {
@@ -210,7 +212,7 @@
   
   @keyframes shimmer {
     0% { left: -100%; }
-    100% { left: 100%; }
+    100% { left: 200%; }
   }
   
   .gold-border-glow {

@@ -90,7 +90,8 @@ Contexte:
         style,
       },
     }
-  } catch {
+  } catch (err) {
+    console.error('ERREUR IA INVITATION:', err)
     return { error: "Une erreur inattendue est survenue pendant la generation." }
   }
 }

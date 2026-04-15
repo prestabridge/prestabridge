@@ -357,7 +357,7 @@ function ResultsContent() {
         </div>
 
         {/* 4. ACTION FINALE */}
-        <div className="sticky bottom-6 z-50">
+        <div className="sticky bottom-20 md:bottom-6 z-40">
           <div className="glass-gold border border-gold/30 rounded-2xl p-4 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 glow-gold-strong">
             <div className="text-center md:text-left">
               <p className="text-sm text-muted-foreground">Total de votre scène</p>

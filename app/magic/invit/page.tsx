@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 import { generateInvitationContent, sendInvitationTestEmail } from '@/app/actions/ai-invitation'
 import { toPng } from 'html-to-image'
 
@@ -73,7 +75,11 @@ export default function InvitIAPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-6xl mx-auto space-y-4">
+        <Button asChild variant="ghost" className="mb-0">
+          <Link href="/magic"><ArrowLeft className="h-4 w-4 mr-2" />Magic Hub</Link>
+        </Button>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="glass-gold border-gold/30">
           <CardHeader>
             <CardTitle>Invit'IA</CardTitle>
@@ -164,6 +170,7 @@ export default function InvitIAPage() {
             {emailStatus && <p className="text-sm text-muted-foreground mt-3">{emailStatus}</p>}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   )

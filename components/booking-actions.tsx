@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateBookingStatus } from '@/app/actions/bookings'
+import { providerAcceptBooking, providerDeclineBooking } from '@/app/actions/vendor-booking'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -12,26 +12,38 @@ interface BookingActionsProps {
 
 export function BookingActions({ bookingId }: BookingActionsProps) {
   const router = useRouter()
-  const [loading, setLoading] = useState<'accept' | 'reject' | null>(null)
+  const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const handleAction = async (status: 'accepted' | 'rejected') => {
-    setLoading(status)
+  const handleAccept = async () => {
+    setLoading('accept')
     setError(null)
-
     try {
-      const result = await updateBookingStatus(bookingId, status)
-
+      const result = await providerAcceptBooking(bookingId)
       if (result.error) {
         setError(result.error)
         setLoading(null)
       } else {
-        // Rafraîchir la page pour voir le nouveau statut
-        // Utiliser router.push pour forcer un rechargement complet
-        router.push('/dashboard')
+        router.push('/dashboard?booking=accepted')
       }
-    } catch (err) {
-      console.error('Erreur lors de la mise à jour:', err)
+    } catch {
+      setError('Une erreur est survenue')
+      setLoading(null)
+    }
+  }
+
+  const handleDecline = async () => {
+    setLoading('decline')
+    setError(null)
+    try {
+      const result = await providerDeclineBooking(bookingId)
+      if (result.error) {
+        setError(result.error)
+        setLoading(null)
+      } else {
+        router.push('/dashboard?booking=declined')
+      }
+    } catch {
       setError('Une erreur est survenue')
       setLoading(null)
     }
@@ -45,7 +57,7 @@ export function BookingActions({ bookingId }: BookingActionsProps) {
         </div>
       )}
       <Button
-        onClick={() => handleAction('accepted')}
+        onClick={handleAccept}
         disabled={loading !== null}
         className="bg-green-600 hover:bg-green-700 text-white"
         size="sm"
@@ -58,12 +70,12 @@ export function BookingActions({ bookingId }: BookingActionsProps) {
         Accepter
       </Button>
       <Button
-        onClick={() => handleAction('rejected')}
+        onClick={handleDecline}
         disabled={loading !== null}
         variant="destructive"
         size="sm"
       >
-        {loading === 'reject' ? (
+        {loading === 'decline' ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
           <XCircle className="h-4 w-4 mr-2" />

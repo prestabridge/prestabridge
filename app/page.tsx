@@ -1,7 +1,6 @@
 import { HeroSection } from "@/components/hero-section"
 import { SelectionModeSection } from "@/components/selection-mode"
 import { TrustSection } from "@/components/trust-section"
-import { Footer } from "@/components/footer"
 import { ServiceCard } from "@/components/service-card"
 import { createClient } from "@/lib/supabase/server"
 import { Sparkles, Wand2, GlassWater, MailPlus } from "lucide-react"
@@ -135,7 +134,6 @@ export default async function Home() {
       )}
 
       <TrustSection />
-      <Footer />
     </main>
   )
 }

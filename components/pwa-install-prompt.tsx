@@ -75,20 +75,20 @@ export function PwaInstallPrompt() {
   }
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-50 mx-auto w-[min(520px,calc(100%-1.5rem))] rounded-2xl border border-yellow-700/35 bg-zinc-950/95 p-3 shadow-2xl backdrop-blur md:inset-x-0 md:bottom-5">
+    <div className="fixed inset-x-3 bottom-3 z-50 mx-auto w-[min(520px,calc(100%-1.5rem))] rounded-2xl glass-gold border-gold/30 p-3 shadow-2xl md:inset-x-0 md:bottom-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-yellow-700/50 bg-black text-xs font-bold tracking-wide text-yellow-500">
+          <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gold-gradient text-xs font-bold tracking-wide text-background glow-gold">
             PB
           </span>
           <div>
-            <p className="text-sm font-semibold text-yellow-500">Installer PrestaBridge</p>
+            <p className="text-sm font-semibold text-gold">Installer PrestaBridge</p>
             {shouldShowInstallButton ? (
-              <p className="mt-1 text-xs text-zinc-300">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Ajoutez l&apos;app pour un lancement instantané, même sur réseau instable.
               </p>
             ) : (
-              <p className="mt-1 text-xs text-zinc-300">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Sur iPhone : touchez Partager puis &quot;Sur l&apos;écran d&apos;accueil&quot;.
               </p>
             )}
@@ -97,7 +97,7 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={closePrompt}
-          className="rounded-md px-2 py-1 text-xs text-zinc-400 transition hover:bg-zinc-900 hover:text-zinc-200"
+          className="rounded-md px-2 py-1 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"
         >
           Fermer
         </button>
@@ -107,14 +107,14 @@ export function PwaInstallPrompt() {
         <button
           type="button"
           onClick={installApp}
-          className="mt-3 w-full rounded-lg bg-yellow-600 px-3 py-2 text-sm font-semibold text-black transition hover:bg-yellow-500"
+          className="mt-3 w-full rounded-lg bg-gold-gradient px-3 py-2 text-sm font-semibold text-background transition hover:opacity-90 glow-gold"
         >
           Installer l&apos;application
         </button>
       )}
 
       {shouldShowIosHelp && (
-        <p className="mt-2 text-[11px] text-zinc-500">
+        <p className="mt-2 text-[11px] text-muted-foreground">
           Astuce iOS: l&apos;option se trouve dans le menu de partage Safari.
         </p>
       )}

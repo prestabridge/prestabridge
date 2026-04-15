@@ -108,9 +108,13 @@ export default async function ProviderDashboardPage() {
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
       pending: { label: 'En attente', variant: 'secondary' },
+      pending_payment: { label: 'Paiement en cours', variant: 'secondary' },
+      pending_vendor_validation: { label: 'Action requise', variant: 'secondary' },
       accepted: { label: 'Acceptée', variant: 'default' },
       validated: { label: 'Validée', variant: 'default' },
       rejected: { label: 'Refusée', variant: 'destructive' },
+      declined: { label: 'Refusée', variant: 'destructive' },
+      expired: { label: 'Expirée', variant: 'destructive' },
       paid: { label: 'Payée', variant: 'default' },
       completed: { label: 'Terminée', variant: 'default' },
       cancelled: { label: 'Annulée', variant: 'destructive' },
@@ -122,7 +126,7 @@ export default async function ProviderDashboardPage() {
       <Badge
         variant={statusInfo.variant}
         className={
-          status === 'pending'
+          status === 'pending' || status === 'pending_payment' || status === 'pending_vendor_validation'
             ? 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20'
             : status === 'accepted' || status === 'validated' || status === 'paid'
             ? 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20'
@@ -292,7 +296,9 @@ export default async function ProviderDashboardPage() {
                           <div className="flex-shrink-0">{getStatusBadge(booking.status)}</div>
                         </div>
                       </div>
-                      {booking.status === 'pending' && (
+                      {(booking.status === 'pending' ||
+                        booking.status === 'pending_vendor_validation' ||
+                        booking.status === 'pending_payment') && (
                         <div className="flex-shrink-0">
                           <BookingActions bookingId={booking.id} />
                         </div>

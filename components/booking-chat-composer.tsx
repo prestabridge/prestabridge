@@ -28,12 +28,12 @@ export function BookingChatComposer({ bookingId }: { bookingId: string }) {
 
   return (
     <div className="border-t border-gold/20 p-3 md:p-4 bg-background/80 backdrop-blur">
-      <div className="flex gap-2">
+      <div className="flex items-start gap-2">
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Écrivez votre message..."
-          className="flex-1 min-h-[44px] max-h-32 rounded-xl border border-gold/20 bg-secondary px-3 py-2 text-sm outline-none focus:border-gold resize-y"
+          className="flex-1 min-h-[44px] max-h-32 rounded-xl border border-gold/20 bg-secondary px-3 py-2 text-base md:text-sm outline-none focus:border-gold resize-y"
         />
         <Button
           onClick={onSend}

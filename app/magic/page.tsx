@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Wand2, GlassWater, MailPlus, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Wand2, GlassWater, MailPlus, ArrowRight, ArrowLeft } from 'lucide-react'
 
 export default function MagicHubPage() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        <Button asChild variant="ghost" className="mb-4">
+          <Link href="/dashboard"><ArrowLeft className="h-4 w-4 mr-2" />Dashboard</Link>
+        </Button>
         <div className="mb-8 text-center">
           <h1 className="text-4xl md:text-5xl font-serif font-bold">
             Magic <span className="text-gold-gradient">Hub</span>

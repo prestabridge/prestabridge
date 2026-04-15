@@ -16,7 +16,12 @@ export default async function SuccessPage({
   if (!paymentIntentId) redirect('/dashboard')
 
   const result = await finalizeManualHoldAndNotify({ paymentIntentId })
-  if (!result.success) redirect('/dashboard')
+
+  if (!result.success) {
+    redirect('/dashboard')
+  }
+
+  const alreadyProcessed = result.appliedStatus === 'already_processed'
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8 flex items-center justify-center">
@@ -27,7 +32,9 @@ export default async function SuccessPage({
           </div>
           <CardTitle>Empreinte bancaire validée</CardTitle>
           <CardDescription>
-            Vos demandes sont passées en attente de validation prestataire.
+            {alreadyProcessed
+              ? 'Vos demandes sont déjà en cours de traitement.'
+              : 'Vos demandes sont passées en attente de validation prestataire.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center text-sm text-muted-foreground">

@@ -29,7 +29,7 @@ const trustItems = [
 
 export function TrustSection() {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 border-y border-[oklch(0.50_0.08_65_/_0.3)] bg-[oklch(0.10_0.015_65_/_0.25)]">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 border-y border-gold/30 bg-[oklch(0.10_0.015_65_/_0.25)]">
       <div className="mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <p className="text-gold-gradient uppercase tracking-[0.3em] text-sm mb-4 font-semibold">
@@ -40,7 +40,7 @@ export function TrustSection() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {trustItems.map((item) => (
             <div
               key={item.title}

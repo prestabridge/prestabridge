@@ -260,17 +260,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-1">
                 Mon <span className="text-gold-gradient">Dashboard</span>
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Gérez vos réservations et vos services
               </p>
             </div>
-            <form action={signOut}>
-              <Button type="submit" variant="outline">
+            <form action={signOut} className="shrink-0">
+              <Button type="submit" variant="outline" size="sm">
                 Déconnexion
               </Button>
             </form>
@@ -584,7 +584,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                               <div className="flex-shrink-0">{getStatusBadge(booking.status)}</div>
                             </div>
                           </div>
-                          {booking.status === 'pending' && (
+                          {(booking.status === 'pending' ||
+                            booking.status === 'pending_vendor_validation' ||
+                            booking.status === 'pending_payment') && (
                             <div className="flex-shrink-0">
                               <BookingActions bookingId={booking.id} />
                             </div>

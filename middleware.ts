@@ -75,6 +75,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|manifest\\.webmanifest|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|js|json|webmanifest)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|manifest\\.webmanifest|apple-icon|api/webhooks/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|js|json|webmanifest)$).*)',
   ],
 }

@@ -41,6 +41,11 @@ export async function analyzeMoodboardImage(imageBase64: string) {
     return { error: "Format d'image invalide." }
   }
 
+  const sizeBytes = Math.ceil((imageBase64.length * 3) / 4)
+  if (sizeBytes > 8 * 1024 * 1024) {
+    return { error: "Image trop volumineuse (max 8 Mo). Utilisez une image plus petite." }
+  }
+
   const openAiKey = process.env.OPENAI_API_KEY
   if (!openAiKey) {
     return { error: "Clé OpenAI indisponible." }
@@ -132,7 +137,8 @@ export async function analyzeMoodboardImage(imageBase64: string) {
       })
 
     return { success: true, tags, services: ranked }
-  } catch {
+  } catch (err) {
+    console.error('ERREUR IA MOODBOARD:', err)
     return { error: "Une erreur inattendue s'est produite pendant l'analyse." }
   }
 }
